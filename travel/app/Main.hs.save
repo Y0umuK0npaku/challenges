@@ -1,0 +1,17 @@
+ module Main (main) where
+
+import Lib
+
+travel :: Int -> [Int] -> Int
+travel n m k  
+	| n = 0 == 0
+	| m = 1 == 
+	| otherwise = 
+	| 	
+
+
+
+main :: IO ()
+main = do
+    n <- readLn :: IO Int
+    
