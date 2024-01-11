@@ -1,4 +1,5 @@
 module SubTreeLabeling (generateTree, subtreeCount, totalNodes) where
+import TreeLabeling (factorial)
 import Data.List (tails)
 import Data.List ((\\))
 
@@ -9,26 +10,27 @@ data Tree a = Node {
     subForest :: [Tree a]    
 } deriving (Show)
 
-
-generateTree :: Integer -> Integer -> Tree Integer
+generateTree :: Int -> Int -> Tree Int
 generateTree k 0 = Node 1 []
 generateTree k d = Node 1 [generateTree k (d-1) | _ <- [1..k]]
 
-fact :: Integer -> Integer
-fact 0 = 1
-fact n = n * fact (n - 1)
-
--- Count the total number of nodes in the tree
 totalNodes :: Tree a -> Integer
 totalNodes (Node _ subTrees) = 1 + sum (map totalNodes subTrees)
 
--- Calculate the number of valid labelings for a k-ary tree
-subtreeCount :: Tree Integer -> Integer
+
+subtreeCount :: Tree a -> Integer
 subtreeCount tree@(Node _ subTrees)
   | null subTrees = 1
   | otherwise = let k = toInteger $ length subTrees
                     n = totalNodes tree
                     nkd = totalNodes (head subTrees)
-                in fact (n - 1) `div` product [fact nkd ^ k | _ <- subTrees]
+                in factorial (n - 1) * (subtreeCount (head subTrees))^k `div` (factorial nkd)^k
+
+main = do
+  content <- getContents
+  let inputs = map ((\[k, d] -> (k, d)) . map read . words) . lines $ content
+  let trees = [generateTree k d | (k, d) <- inputs]
+  let results = map subtreeCount trees
+  mapM_ print results
 
 
